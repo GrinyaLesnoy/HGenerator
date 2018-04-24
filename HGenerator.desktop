@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=Krita/PythonPlugin
+X-KDE-Library=HGenerator
+X-Krita-Manual=Manual.html
+X-Python-2-Compatible=false
+Name=Generator Herni
+Comment=Generator vsyakoy herni
