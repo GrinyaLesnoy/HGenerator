@@ -42,7 +42,8 @@ class dataPreparater:
 
         self.mainDialog.setWindowModality(Qt.NonModal)
         self.kritaInstance = krita.Krita.instance()
-
+        self.view = Application.activeWindow().activeView()
+        self.KritaVers = Application.version ()
         self.initialize()
         
 
@@ -143,6 +144,12 @@ class dataPreparater:
         self.mainDialog.setSizeGripEnabled(True)
         self.mainDialog.show()
         self.mainDialog.activateWindow()
+
+    def getComponents(self,type): 
+        KritaVers = self.KritaVers  
+        type+= 'GroundColor' if (KritaVers=='4.0.0' or KritaVers=='4.0.1') else 'groundColor'
+        return getattr(self.view,type)().components()
+
     
     def confirmButton(self):
         config = self.config
@@ -158,13 +165,13 @@ class dataPreparater:
         with open(self.configFile, mode='w',encoding='utf-8') as f:
             json.dump(config, f, ensure_ascii=False, indent=4, separators=(',', ': '))
         
-        view = Application.activeWindow().activeView()
-        components = view.backGroundColor().components()
+        view = Application.activeWindow().activeView()  
         # Front Color
         if Colors[0]=='White' :
             CFront = [1.0,1.0,1.0,1.0]
         elif 'Front' in Colors[0]:
-            components = view.foreGroundColor().components()
+            components = self.getComponents('fore')
+            #foregroundColor
             CFront=[
                 components[0],
                 components[1],
@@ -179,7 +186,7 @@ class dataPreparater:
             CBack = CFront[:]
             CBack[3]=0.0
         elif 'Back' in Colors[1] :
-            components = view.backGroundColor().components()
+            components = self.getComponents('back')
             CBack=[
                 components[0],
                 components[1],
@@ -202,21 +209,4 @@ class dataPreparater:
         #self.msgBox.setText("Complete!")
         #self.msgBox.exec_()
         self.mainDialog.close()
-
-    def getColors(self):
-        #colors
-        view = Application.activeWindow().activeView()
-        components = view.foreGroundColor().components()
-        CFront = [
-            int(round(components[2]*255)),
-            int(round(components[1]*255)),
-            int(round(components[0]*255)),
-            int(round(components[3]*255)),
-        ] 
-        components = view.backGroundColor().components()
-        CBack = [
-            int(round(components[2]*255)),
-            int(round(components[1]*255)),
-            int(round(components[0]*255)),
-            int(round(components[3]*255)),
-        ] 
+ 
